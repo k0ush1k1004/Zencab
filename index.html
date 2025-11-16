@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com https://apis.mappls.com https://*.clerk.accounts.dev;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://*.clerk.accounts.dev;
+  img-src 'self' data: https:;
+  worker-src 'self' blob:;
+">
+
+    <title>ZENCAB | Ride Easy</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="ZENCAB Logo with Cityscape and Car Icon.png" />
+
+    <!-- SheerID CSS Library -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@sheerid/jslib@2/sheerid-install.css"
+      type="text/css"
+      crossorigin="anonymous"
+    />
+
+    <!-- ✅ Optional Extended Google Components (for future updates) -->
+    <script
+      type="module"
+      src="https://unpkg.com/@googlemaps/extended-component-library@0.6"
+    ></script>
+
+    <!-- ✅ No direct Google Maps script here — handled by useJsApiLoader -->
+  </head>
+
+  <body class="antialiased bg-gray-50">
+    <div id="root"></div>
+
+    <!-- Vite entry -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
