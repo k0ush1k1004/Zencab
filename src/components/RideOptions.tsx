@@ -166,9 +166,6 @@ export default function RideOptions({
     if (promoCode.toUpperCase() === "ZENCAB10") {
       setDiscount(10);
       setShowPromo(false);
-    } else if (promoCode.toUpperCase() === "STUDENT30") {
-      setDiscount(30);
-      setShowPromo(false);
     } else if (promoCode.toUpperCase() === "FIRST20") {
       setDiscount(20);
       setShowPromo(false);
