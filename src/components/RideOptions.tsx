@@ -260,15 +260,19 @@ export default function RideOptions({
             <span>{distance.toFixed(1)} km</span>
           </div>
           <div className="h-4 w-px bg-white/30" />
-          <button
-            onClick={() => setScheduleRide(!scheduleRide)}
-            className={flex items-center space-x-1 px-2 py-1 rounded transition ${scheduleRide ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'}}
-          >
-            <Clock className="w-4 h-4" />
-            <span className="text-xs">Schedule</span>
-          </button>
-          <div className="h-4 w-px bg-white/30" />
-          <button
+   <button
+  onClick={() => setScheduleRide(!scheduleRide)}
+  className={`flex items-center space-x-1 px-2 py-1 rounded transition ${
+    scheduleRide ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'
+  }`}
+>
+  <Clock className="w-4 h-4" />
+  <span className="text-xs">Schedule</span>
+</button>
+
+<div className="h-4 w-px bg-white/30" />
+
+<button>
             onClick={() => setShowCarbonInfo(!showCarbonInfo)}
             className={flex items-center space-x-1 px-2 py-1 rounded transition ${showCarbonInfo ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'}}
           >
