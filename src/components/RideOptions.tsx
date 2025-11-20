@@ -393,7 +393,7 @@ export default function RideOptions({
               type="text"
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-              placeholder="Enter code (ZENCAB10 or FIRST20 OR STUDENT30)"
+              placeholder="Enter code (ZENCAB10 or FIRST20)"
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00BFA6] outline-none"
             />
             <button
