@@ -64,6 +64,7 @@ export default function RideOptions({
   const [selectedRide, setSelectedRide] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [studentDiscount, setStudentDiscount] = useState(0);
   const [showPromo, setShowPromo] = useState(false);
   const [scheduleRide, setScheduleRide] = useState(false);
   const [showCarbonInfo, setShowCarbonInfo] = useState(false);
@@ -165,6 +166,9 @@ export default function RideOptions({
     if (promoCode.toUpperCase() === "ZENCAB10") {
       setDiscount(10);
       setShowPromo(false);
+    } else if (promoCode.toUpperCase() === "STUDENT30") {
+      setDiscount(30);
+      setShowPromo(false);
     } else if (promoCode.toUpperCase() === "FIRST20") {
       setDiscount(20);
       setShowPromo(false);
@@ -173,8 +177,43 @@ export default function RideOptions({
     }
   };
 
+  // Check for student verification on component mount
+  useEffect(() => {
+    const storedVerification = localStorage.getItem('studentEmailVerified');
+    if (storedVerification) {
+      try {
+        const verificationData = JSON.parse(storedVerification);
+        const verifiedAt = new Date(verificationData.verifiedAt);
+        const now = new Date();
+        const daysDiff = (now.getTime() - verifiedAt.getTime()) / (1000 * 3600 * 24);
+        if (daysDiff < 30) {
+          setStudentDiscount(20); // 20% student discount
+        }
+      } catch (error) {
+        // Ignore invalid data
+      }
+    }
+  }, []);
+
   const getLowestFare = () => {
     return Math.min(...rides.map(r => calculateFare(r.rate, r.surgeMultiplier || 1)));
+  };
+
+  // Function to check if student discount should be applied
+  const isStudentVerified = () => {
+    const storedVerification = localStorage.getItem('studentEmailVerified');
+    if (storedVerification) {
+      try {
+        const verificationData = JSON.parse(storedVerification);
+        const verifiedAt = new Date(verificationData.verifiedAt);
+        const now = new Date();
+        const daysDiff = (now.getTime() - verifiedAt.getTime()) / (1000 * 3600 * 24);
+        return daysDiff < 30;
+      } catch (error) {
+        return false;
+      }
+    }
+    return false;
   };
 
   // Calculate carbon footprint in grams
@@ -223,7 +262,7 @@ export default function RideOptions({
           <div className="h-4 w-px bg-white/30" />
           <button
             onClick={() => setScheduleRide(!scheduleRide)}
-            className={`flex items-center space-x-1 px-2 py-1 rounded transition ${scheduleRide ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'}`}
+            className={flex items-center space-x-1 px-2 py-1 rounded transition ${scheduleRide ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'}}
           >
             <Clock className="w-4 h-4" />
             <span className="text-xs">Schedule</span>
@@ -231,7 +270,7 @@ export default function RideOptions({
           <div className="h-4 w-px bg-white/30" />
           <button
             onClick={() => setShowCarbonInfo(!showCarbonInfo)}
-            className={`flex items-center space-x-1 px-2 py-1 rounded transition ${showCarbonInfo ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'}`}
+            className={flex items-center space-x-1 px-2 py-1 rounded transition ${showCarbonInfo ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'}}
           >
             <Leaf className="w-4 h-4" />
             <span className="text-xs">Carbon</span>
@@ -273,7 +312,7 @@ export default function RideOptions({
           <p className="text-gray-700 mb-4">{driverName} has accepted your booking and will arrive within 6 min.</p>
           <div className="flex items-center justify-between">
             <div className="flex flex-col items-center">
-              <div className={`relative ${qrScanned ? 'opacity-50' : ''}`}>
+              <div className={relative ${qrScanned ? 'opacity-50' : ''}}>
                 <QRCodeSVG value={qrData} size={100} />
                 {qrScanned && (
                   <div className="absolute inset-0 flex items-center justify-center bg-green-500 bg-opacity-80 rounded">
@@ -286,7 +325,7 @@ export default function RideOptions({
               </p>
             </div>
             <div className="flex flex-col items-center">
-              <div className={`text-2xl font-bold ${qrScanned ? 'text-green-600' : 'text-[#00BFA6]'}`}>
+              <div className={text-2xl font-bold ${qrScanned ? 'text-green-600' : 'text-[#00BFA6]'}}>
                 {otp}
               </div>
               <p className="text-sm text-gray-500">6-Digit OTP</p>
@@ -377,13 +416,24 @@ export default function RideOptions({
             </button>
           </div>
         )}
+
+        {studentDiscount > 0 && (
+          <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-xl mb-2">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-5 h-5 text-blue-600" />
+              <span className="font-semibold text-blue-700">Student Discount: {studentDiscount}% OFF</span>
+            </div>
+            <span className="text-blue-600 text-sm">Verified</span>
+          </div>
+        )}
       </div>
 
       {/* Ride List */}
       <div className="flex-1 px-4 pb-4 space-y-3 overflow-y-auto">
         {rides.map((ride) => {
           const fare = calculateFare(ride.rate, ride.surgeMultiplier || 1);
-          const originalFare = calculateFare(ride.rate, ride.surgeMultiplier || 1) / (1 - discount / 100);
+          const totalDiscount = Math.min(100, discount + studentDiscount);
+          const originalFare = calculateFare(ride.rate, ride.surgeMultiplier || 1) / (1 - totalDiscount / 100);
           const savings = fare === getLowestFare() && fare < originalFare;
           const carbonFootprint = calculateCarbon(ride.carbonEmission);
           const carbonSaved = calculateCarbonSaved(ride.carbonEmission);
@@ -480,9 +530,9 @@ export default function RideOptions({
                       ride.isEcoFriendly ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'
                     }`}>
                       <div className="flex items-center space-x-2">
-                        <Wind className={`w-3 h-3 ${ride.isEcoFriendly ? 'text-green-600' : 'text-gray-500'}`} />
+                        <Wind className={w-3 h-3 ${ride.isEcoFriendly ? 'text-green-600' : 'text-gray-500'}} />
                         <span className={ride.isEcoFriendly ? 'text-green-700 font-semibold' : 'text-gray-600'}>
-                          {carbonFootprint === 0 ? 'Zero Emission' : `${carbonFootprint}g CO₂`}
+                          {carbonFootprint === 0 ? 'Zero Emission' : ${carbonFootprint}g CO₂}
                         </span>
                       </div>
                       {carbonSaved > 0 && (
@@ -499,7 +549,7 @@ export default function RideOptions({
               {/* Price Section */}
               <div className="text-right ml-4">
                 <div className="flex flex-col items-end">
-                  {discount > 0 && (
+                  {(discount > 0 || studentDiscount > 0) && (
                     <span className="text-xs text-gray-400 line-through">
                       ₹{Math.round(originalFare)}
                     </span>
@@ -509,6 +559,12 @@ export default function RideOptions({
                     <span className="text-xs text-green-600 font-semibold flex items-center space-x-1">
                       <Tag className="w-3 h-3" />
                       <span>Best Value</span>
+                    </span>
+                  )}
+                  {studentDiscount > 0 && (
+                    <span className="text-xs text-blue-600 font-semibold flex items-center space-x-1">
+                      <CheckCircle className="w-3 h-3" />
+                      <span>Student Discount</span>
                     </span>
                   )}
                 </div>
