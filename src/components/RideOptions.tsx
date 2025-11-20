@@ -259,10 +259,8 @@ export default function RideOptions({
             <Clock className="w-4 h-4" />
             <span className="text-xs">Schedule</span>
           </button>
-
           <div className="h-4 w-px bg-white/30" />
-
-          <button onClick={() => setShowCarbonInfo(!showCarbonInfo)} className={flex items-center space-x-1 px-2 py-1 rounded ${showCarbonInfo ? "bg-white/30" : "bg-white/10 hover:bg-white/20"}}>
+          <button onClick={() => setShowCarbonInfo(!showCarbonInfo)} className={`flex items-center space-x-1 px-2 py-1 rounded ${showCarbonInfo ? "bg-white/30" : "bg-white/10 hover:bg-white/20"}`}>
             <Leaf className="w-4 h-4" />
             <span className="text-xs">Carbon</span>
           </button>
